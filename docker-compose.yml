@@ -1,0 +1,98 @@
+version: "3.8"
+
+services:
+  mongodb:
+    container_name: mongodb
+    image: mongo:4.0.20-xenial
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    ports:
+    - 27017:27017
+    networks:
+      - backend
+
+  redis:
+    container_name: redis
+    image: redis:6-alpine
+    restart: always
+    ports:
+    - 6379:6379
+    networks:
+      - backend
+
+  reverse-proxy:
+    container_name: reverse-proxy
+    image: nginx:alpine
+    ports:
+    - 80:80
+    volumes:
+    - ./conf.d:/etc/nginx/conf.d
+    networks:
+      - exposed
+      - frontend
+
+  backend:
+    container_name: backend
+    build:
+      context: packages/backend
+    environment:
+      MONGODB_ENDPOINT: mongodb:27017
+      REDIS_DSN: redis:6379
+    networks:
+      - frontend
+      - backend
+
+  frontend:
+    container_name: frontend
+    build:
+      context: packages/frontend
+    networks:
+      - frontend
+
+  cadvisor:
+    image: google/cadvisor:latest
+    container_name: cadvisor
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    networks:
+      - monitoring
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - ./prometheus:/etc/prometheus
+      - prometheus-data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention=200h'
+    networks:
+      - monitoring
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    volumes:
+      - grafana-data:/var/lib/grafana
+    ports:
+      - "3000:3000"
+    networks:
+      - monitoring
+
+volumes:
+  prometheus-data: {}
+  grafana-data: {}
+
+networks:
+  exposed:
+  frontend:
+  backend:
+  monitoring:
