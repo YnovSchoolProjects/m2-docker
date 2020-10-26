@@ -23,3 +23,10 @@ Cloner le dépots, puis
 ```bash
 docker-compose up
 ```
+
+Liens du projet :
+
+| Service | URL |
+|---|---|
+| application | http://localhost  |
+| monitoring | http://localhost:9090 |
