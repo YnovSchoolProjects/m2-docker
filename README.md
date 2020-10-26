@@ -21,7 +21,7 @@ A RENDRE AVANT LE 2 NOV 2020 00H00.
 
 ### Rendu
 
-Cloner le dépots, puis
+Cloner le dépot, puis
 ```bash
 docker-compose up
 ```
