@@ -10,9 +10,11 @@ Creation d'une infra avec la techno que vous voulez:
 	=> une API qui enregistre en bdd un client lorsque l'on lance url /put_name/$un_nom e
 	==> Ce $un_nom devra être enregistré en BDD dans une table/collection nommée name.
 - Un container redis pour stocker un compteur de visite 
+
 ==> 15/20
 
 - personnalisation de l'infra avec Kibana ou tout autre système de monitoring / recup de logs  
+
 ==> 5/20
 
 A RENDRE AVANT LE 2 NOV 2020 00H00.
